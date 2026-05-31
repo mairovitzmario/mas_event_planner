@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import os
 import warnings
 from datetime import datetime
 
@@ -20,9 +21,11 @@ def run():
     max_iterations = 3
     iteration = 1
     previous_issues = "None. This is the first draft."
+    
+    os.makedirs("output", exist_ok=True)
 
     # Clear initial summary document block
-    with open("negotiation_summary.md", "w") as f:
+    with open("output/negotiation_summary.md", "w") as f:
         f.write("# Total Event Planning Negotiation Summary\n\n")
 
     while iteration <= max_iterations:
@@ -45,13 +48,13 @@ def run():
 
             # Write individual loop negotiation summary
             if plan_result.negotiation_summary:
-                with open("negotiation_summary.md", "a") as f:
+                with open("output/negotiation_summary.md", "a") as f:
                     f.write(f"## Loop {iteration} Negotiation Drama\n")
                     f.write(plan_result.negotiation_summary + "\n\n")
                 
             if plan_result.all_resolved:
                 print("\n*** Success! All guests are perfectly happy! ***\n")
-                with open("event_plan.md", "w") as f:
+                with open("output/event_plan.md", "w") as f:
                     f.write(plan_result.final_plan_markdown)
                 return
             else:
@@ -69,7 +72,7 @@ def run():
     if iteration > max_iterations:
         print(f"\n*** Reached maximum {max_iterations} iterations. Forcing plan finalization despite complaints. ***")
         if 'plan_result' in locals() and plan_result:
-            with open("event_plan.md", "w") as f:
+            with open("output/event_plan.md", "w") as f:
                 f.write(plan_result.final_plan_markdown)
 
 def train():
