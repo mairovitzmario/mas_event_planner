@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    network_mode: "host"
     environment:
       - MODEL=${MODEL:?}
       - GEMINI_API_KEY=${GEMINI_API_KEY:?}
