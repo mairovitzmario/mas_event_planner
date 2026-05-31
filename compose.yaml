@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .
+    environment:
+      - MODEL=${MODEL:?}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:?}
+    volumes:
+      - ./output:/app/output
