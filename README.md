@@ -61,6 +61,9 @@ To execute the multiagent workflow and generate your event plan, use the CrewAI 
 # Make sure you are inside the venv
 source .venv/bin/activate
 crewai run
+
+# If you wish to save logs inside a file you can pipe the output via the tee command like so
+crewai run 2>&1 | tee output/conversation.log
 ```
 
 Once completed, the planned outputs such as `event_plan.md` and `negotiation_summary.md` will be available in the `output/` directory.
