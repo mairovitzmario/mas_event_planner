@@ -4,8 +4,8 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 
 
 @CrewBase
-class A():
-    """A crew"""
+class EventPlanner():
+    """EventPlanner crew"""
 
     agents: list[BaseAgent]
     tasks: list[Task]
@@ -39,10 +39,11 @@ class A():
 
     @crew
     def crew(self) -> Crew:
-        """Creates the A crew"""
+        """Creates the EventPlanner crew"""
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
             process=Process.sequential,
+            max_requests_per_minute=5,
             verbose=True,
         )

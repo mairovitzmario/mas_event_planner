@@ -4,7 +4,7 @@ import warnings
 
 from datetime import datetime
 
-from a.crew import A
+from event_planner.crew import EventPlanner
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
@@ -19,7 +19,7 @@ def run():
     }
 
     try:
-        A().crew().kickoff(inputs=inputs)
+        EventPlanner().crew().kickoff(inputs=inputs)
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
 
@@ -33,7 +33,7 @@ def train():
         'current_year': str(datetime.now().year)
     }
     try:
-        A().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
+        EventPlanner().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
 
     except Exception as e:
         raise Exception(f"An error occurred while training the crew: {e}")
@@ -43,7 +43,7 @@ def replay():
     Replay the crew execution from a specific task.
     """
     try:
-        A().crew().replay(task_id=sys.argv[1])
+        EventPlanner().crew().replay(task_id=sys.argv[1])
 
     except Exception as e:
         raise Exception(f"An error occurred while replaying the crew: {e}")
@@ -58,7 +58,7 @@ def test():
     }
 
     try:
-        A().crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
+        EventPlanner().crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
 
     except Exception as e:
         raise Exception(f"An error occurred while testing the crew: {e}")
@@ -84,7 +84,7 @@ def run_with_trigger():
     }
 
     try:
-        result = A().crew().kickoff(inputs=inputs)
+        result = EventPlanner().crew().kickoff(inputs=inputs)
         return result
     except Exception as e:
         raise Exception(f"An error occurred while running the crew with trigger: {e}")
