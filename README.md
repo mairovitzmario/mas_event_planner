@@ -1,54 +1,66 @@
-# A Crew
+# Multiagent System (MAS) Event Planner
 
-Welcome to the A Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+## Problem Domain
 
-## Installation
+This project automates event planning by managing overlapping constraints like RSVPs, dietary restrictions, and seating arrangements. It uses a multiagent system to negotiate these details and dynamically generate an optimal, conflict-free event plan.
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
+## Architecture
 
-First, if you haven't already, install uv:
+The system is built using the **CrewAI** framework, leveraging a robust network of autonomous agents to handle specific aspects of the event planning process.
 
-```bash
-pip install uv
-```
+- **Agents**: Each agent is configured with a specific role, goal, and backstory (e.g., handling seating, resolving dietary restrictions, or tracking RSVPs).
+- **Tasks**: The agents are assigned specific tasks to gather inputs, negotiate, and formulate plans.
+- **Workflow**: The system uses a Crew to orchestrate task execution. Agents collaborate and negotiate internally to produce the final artifacts without requiring continuous manual intervention.
+- Configuration for agents and tasks is defined declaratively using YAML inside `src/event_planner/config/`.
 
-Next, navigate to your project directory and install the dependencies:
+## Setup Instructions
 
-(Optional) Lock the dependencies and install them by using the CLI command:
-```bash
-crewai install
-```
-### Customizing
+This project uses `uv` for fast Python dependency management.
 
-**Add your `OPENAI_API_KEY` into the `.env` file**
+### 1. Prerequisites
 
-- Modify `src/a/config/agents.yaml` to define your agents
-- Modify `src/a/config/tasks.yaml` to define your tasks
-- Modify `src/a/crew.py` to add your own logic, tools and specific args
-- Modify `src/a/main.py` to add custom inputs for your agents and tasks
-
-## Running the Project
-
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
+Ensure you have `uv` installed. If you don't have it installed:
 
 ```bash
-$ crewai run
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-This command initializes the a Crew, assembling the agents and assigning them tasks as defined in your configuration.
+### 2. Create and Activate the Virtual Environment
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+Initialize the virtual environment at the project root and activate it:
 
-## Understanding Your Crew
+```bash
+uv venv .venv
+source .venv/bin/activate
+```
 
-The a Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+### 3. Install Dependencies
 
-## Support
+Install the project dependencies using `uv`:
 
-For support, questions, or feedback regarding the A Crew or crewAI.
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
+```bash
+uv sync
+```
 
-Let's create wonders together with the power and simplicity of crewAI.
+_(You can also use the CrewAI CLI: `crewai install`)_
+
+### 4. Configuration
+
+Create an `.env` file in the project's root folder and populate it with your specific API key. Follow the `.env.example` model:
+
+```env
+MODEL=gemini/gemini-3.1-flash-lite
+GEMINI_API_KEY=your-api-key
+```
+
+### 5. Running the Application
+
+To execute the multiagent workflow and generate your event plan, use the CrewAI CLI:
+
+```bash
+# Make sure you are inside the venv
+source .venv/bin/activate
+crewai run
+```
+
+Once completed, the planned outputs such as `event_plan.md` and `negotiation_summary.md` will be available in the `output/` directory.
