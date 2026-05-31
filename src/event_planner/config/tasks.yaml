@@ -4,7 +4,6 @@ guest_task:
     {guest_list}
   expected_output: >
     A short summary of {guest_name}'s RSVP status, dietary restrictions, and seating preferences (or simply state they are not attending).
-  agent: guest_agent
 
 menu_formulation_task:
   description: >
