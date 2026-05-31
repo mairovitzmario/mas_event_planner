@@ -1,0 +1,32 @@
+[
+  {
+    "guest_name": "Alice",
+    "attending": "Yes",
+    "dietary": "Vegetarian",
+    "seating": "Prefers not to sit next to Bob"
+  },
+  {
+    "guest_name": "Bob",
+    "attending": "Yes",
+    "dietary": "None constraints",
+    "seating": "Prefers sitting next to Charlie"
+  },
+  {
+    "guest_name": "Charlie",
+    "attending": "Yes",
+    "dietary": "Gluten-free",
+    "seating": "Prefers sitting next to Bob"
+  },
+  {
+    "guest_name": "David",
+    "attending": "No",
+    "dietary": "N/A",
+    "seating": "N/A"
+  },
+  {
+    "guest_name": "Eve",
+    "attending": "Yes",
+    "dietary": "Vegan",
+    "seating": "Prefers sitting near the window"
+  }
+]

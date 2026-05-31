@@ -1,21 +1,42 @@
-guest_task:
+guest_preference_task:
   description: >
-    Extract and summarize {guest_name}'s RSVP status, dietary restrictions, and seating preferences from the master guest list below:
-    {guest_list}
+    Communicate your attendance status, dietary needs, and seating preferences to the Host and Caterer.
   expected_output: >
-    A short summary of {guest_name}'s RSVP status, dietary restrictions, and seating preferences (or simply state they are not attending).
+    A clear statement from {guest_name} detailing attendance, food, and seating needs.
+  agent: guest_agent
 
 menu_formulation_task:
   description: >
-    Using all the guest information provided by the guest tasks, aggregate the dietary restrictions of those ATTENDING and formulate a final menu that accommodates everyone.
+    Read the preferences from all the guests. Determine who is attending, gather their dietary restrictions, and propose a menu.
   expected_output: >
-    A final menu plan with specific dishes catering to the aggregated dietary restrictions.
+    A detailed catering menu catering exactly to the attendees' dietary needs.
   agent: catering_agent
 
-seating_and_final_plan_task:
+host_draft_seating_task:
   description: >
-    Using the guests' preferences and the proposed menu, finalize the event plan. Produce a seating chart that honors preferences and avoids conflicts (only for attending guests).
+    Read the preferences from all attending guests. 
+    IMPORTANT: Here are the complaints from the previous iteration that you MUST try to fix this time: 
+    {previous_issues}
+    
+    Create an initial DRAFT Seating Chart. Explicitly list who sits next to whom. Try to satisfy as many preferences as possible.
   expected_output: >
-    A comprehensive event plan with: 1) The final menu, 2) The seating chart for attending guests, 3) A summary of attendance.
-    Formatted as markdown without '```'.
+    A drafted seating chart.
+  agent: host_agent
+
+guest_review_task:
+  description: >
+    Review the host's DRAFT Seating Chart. 
+    If you ({guest_name}) are NOT attending, simply reply "N/A".
+    If you are attending, check if your preference ({seating}) is met. If perfectly met, approve enthusiastically.
+    If it is NOT met, you MUST strongly object and clearly state exactly why it fails. Do not compromise.
+  expected_output: >
+    An approval or a strong objection from {guest_name} regarding the draft seating chart.
+  agent: guest_agent
+
+host_finalize_task:
+  description: >
+    Review the menu and all guest feedback on your drafted seating chart. 
+    If there are any strong objections from the guests, record them accurately. Provide the final plan.
+  expected_output: >
+    Fill out the required JSON format. If guest reviews contain ANY strong objections, all_resolved must be false, and insert the complaints into remaining_complaints. Insert the markdown plan into final_plan_markdown.
   agent: host_agent

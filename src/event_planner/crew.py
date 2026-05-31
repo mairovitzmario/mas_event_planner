@@ -1,15 +1,22 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew
+from pydantic import BaseModel, Field
+from typing import List
+
+class EventPlanResult(BaseModel):
+    all_resolved: bool = Field(description="True if there were zero complaints from guests in their reviews, meaning everyone perfectly approved.")
+    remaining_complaints: List[str] = Field(description="List of objections raised by guests that could not be satisfied, if any.")
+    final_plan_markdown: str = Field(description="The complete event plan markdown, including the menu and the seating chart.")
 
 @CrewBase
 class EventPlanner():
-    """EventPlanner crew with dynamically generated guest agents"""
+    """EventPlanner crew with dynamically generated guest agents and true negotiation"""
 
     agents_config = 'config/agents.yaml'
     tasks_config = 'config/tasks.yaml'
 
-    def __init__(self, guests=None):
-        self.guests = guests or []
+    def __init__(self, guests_data=None):
+        self.guests_data = guests_data or []
 
     @agent
     def catering_agent(self) -> Agent:
@@ -27,41 +34,63 @@ class EventPlanner():
 
     @crew
     def crew(self) -> Crew:
-        """Creates the EventPlanner crew with an agent per guest"""
-        guest_agents = []
-        guest_tasks = []
+        guest_agents = {}
+        preference_tasks = []
+        review_tasks = []
 
-        for guest_name in self.guests:
+        # 1. Initialize Persona Agents & Provide preferences
+        for g_data in self.guests_data:
+            guest_name = g_data["guest_name"]
             g_agent = Agent(
-                role=self.agents_config['guest_agent']['role'].format(guest_name=guest_name),
-                goal=self.agents_config['guest_agent']['goal'].format(guest_name=guest_name),
-                backstory=self.agents_config['guest_agent']['backstory'].format(guest_name=guest_name),
+                role=self.agents_config['guest_agent']['role'].format(**g_data),
+                goal=self.agents_config['guest_agent']['goal'].format(**g_data),
+                backstory=self.agents_config['guest_agent']['backstory'].format(**g_data),
                 verbose=True
             )
-            guest_agents.append(g_agent)
+            guest_agents[guest_name] = g_agent
 
-            g_task = Task(
-                description=self.tasks_config['guest_task']['description'].format(guest_name=guest_name, guest_list="{guest_list}"),
-                expected_output=self.tasks_config['guest_task']['expected_output'].format(guest_name=guest_name),
+            pref_task = Task(
+                description=self.tasks_config['guest_preference_task']['description'].format(**g_data),
+                expected_output=self.tasks_config['guest_preference_task']['expected_output'].format(**g_data),
                 agent=g_agent
             )
-            guest_tasks.append(g_task)
+            preference_tasks.append(pref_task)
 
+        # 2. Caterer formulates menu based on preferences
         menu_task = Task(
             config=self.tasks_config['menu_formulation_task'],
             agent=self.catering_agent(),
-            context=guest_tasks
+            context=preference_tasks
         )
 
-        seating_task = Task(
-            config=self.tasks_config['seating_and_final_plan_task'],
+        # 3. Host drafts initial seating chart
+        draft_seating_task = Task(
+            config=self.tasks_config['host_draft_seating_task'],
             agent=self.host_agent(),
-            context=guest_tasks + [menu_task],
-            output_file='event_plan.md'
+            context=preference_tasks
         )
 
-        all_agents = guest_agents + [self.catering_agent(), self.host_agent()]
-        all_tasks = guest_tasks + [menu_task, seating_task]
+        # 4. Guests review the drafted chart and approve/object
+        for g_data in self.guests_data:
+            guest_name = g_data["guest_name"]
+            rev_task = Task(
+                description=self.tasks_config['guest_review_task']['description'].format(**g_data),
+                expected_output=self.tasks_config['guest_review_task']['expected_output'].format(**g_data),
+                agent=guest_agents[guest_name],
+                context=[draft_seating_task]
+            )
+            review_tasks.append(rev_task)
+
+        # 5. Host finalizes everything resolving conflicts, providing output inside Pydantic model
+        finalize_task = Task(
+            config=self.tasks_config['host_finalize_task'],
+            agent=self.host_agent(),
+            context=[menu_task, draft_seating_task] + review_tasks,
+            output_pydantic=EventPlanResult
+        )
+
+        all_agents = list(guest_agents.values()) + [self.catering_agent(), self.host_agent()]
+        all_tasks = preference_tasks + [menu_task, draft_seating_task] + review_tasks + [finalize_task]
 
         return Crew(
             agents=all_agents,
