@@ -97,4 +97,5 @@ class EventPlanner():
             tasks=all_tasks,
             process=Process.sequential,
             verbose=True,
+            max_rpm=10,
         )

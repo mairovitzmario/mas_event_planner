@@ -1,0 +1,38 @@
+[
+  {
+    "guest_name": "Alice",
+    "attending": "Yes",
+    "dietary": "Vegetarian",
+    "seating": "Must not sit next to Bob or Charlie. Wants to sit near Fiona."
+  },
+  {
+    "guest_name": "Bob",
+    "attending": "Yes",
+    "dietary": "Carnivore",
+    "seating": "Must sit next to David. Refuses to sit near Eve (vegan)."
+  },
+  {
+    "guest_name": "Charlie",
+    "attending": "Yes",
+    "dietary": "Gluten-free",
+    "seating": "Needs to sit next to Alice."
+  },
+  {
+    "guest_name": "David",
+    "attending": "Yes",
+    "dietary": "None",
+    "seating": "Must sit next to Bob."
+  },
+  {
+    "guest_name": "Eve",
+    "attending": "Yes",
+    "dietary": "Vegan",
+    "seating": "Needs a window seat, refuses to sit next to any Carnivores like Bob."
+  },
+  {
+    "guest_name": "Fiona",
+    "attending": "Yes",
+    "dietary": "Pescatarian",
+    "seating": "Will only sit next to Alice."
+  }
+]

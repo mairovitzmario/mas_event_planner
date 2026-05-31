@@ -3,7 +3,6 @@ guest_preference_task:
     Communicate your attendance status, dietary needs, and seating preferences to the Host and Caterer.
   expected_output: >
     A clear statement from {guest_name} detailing attendance, food, and seating needs.
-  agent: guest_agent
 
 menu_formulation_task:
   description: >
@@ -31,7 +30,6 @@ guest_review_task:
     If it is NOT met, you MUST strongly object and clearly state exactly why it fails. Do not compromise.
   expected_output: >
     An approval or a strong objection from {guest_name} regarding the draft seating chart.
-  agent: guest_agent
 
 host_finalize_task:
   description: >
