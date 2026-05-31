@@ -1,17 +1,22 @@
-research_task:
+guest_task:
   description: >
-    Conduct a thorough research about {topic}
-    Make sure you find any interesting and relevant information given
-    the current year is {current_year}.
+    Extract and summarize {guest_name}'s RSVP status, dietary restrictions, and seating preferences from the master guest list below:
+    {guest_list}
   expected_output: >
-    A list with 10 bullet points of the most relevant information about {topic}
-  agent: researcher
+    A short summary of {guest_name}'s RSVP status, dietary restrictions, and seating preferences (or simply state they are not attending).
+  agent: guest_agent
 
-reporting_task:
+menu_formulation_task:
   description: >
-    Review the context you got and expand each topic into a full section for a report.
-    Make sure the report is detailed and contains any and all relevant information.
+    Using all the guest information provided by the guest tasks, aggregate the dietary restrictions of those ATTENDING and formulate a final menu that accommodates everyone.
   expected_output: >
-    A fully fledged report with the main topics, each with a full section of information.
-    Formatted as markdown without '```'
-  agent: reporting_analyst
+    A final menu plan with specific dishes catering to the aggregated dietary restrictions.
+  agent: catering_agent
+
+seating_and_final_plan_task:
+  description: >
+    Using the guests' preferences and the proposed menu, finalize the event plan. Produce a seating chart that honors preferences and avoids conflicts (only for attending guests).
+  expected_output: >
+    A comprehensive event plan with: 1) The final menu, 2) The seating chart for attending guests, 3) A summary of attendance.
+    Formatted as markdown without '```'.
+  agent: host_agent
