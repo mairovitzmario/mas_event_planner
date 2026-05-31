@@ -36,36 +36,7 @@ The system operates via a collaborative and iterative negotiation process:
 
 ## Setup Instructions
 
-This project uses `Python` with `uv` for dependency management.
-
-### 1. Prerequisites
-
-Ensure you have `uv` installed. If you don't have it installed:
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-### 2. Create and Activate the Virtual Environment
-
-Initialize the virtual environment at the project root and activate it:
-
-```bash
-uv venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install Dependencies
-
-Install the project dependencies using `uv`:
-
-```bash
-uv sync
-```
-
-_(You can also use the CrewAI CLI: `crewai install`)_
-
-### 4. Configuration
+### 1. Configuration (Required for all methods)
 
 Create an `.env` file in the project's root folder and populate it with your specific API key. Follow the `.env.example` model:
 
@@ -74,13 +45,45 @@ MODEL=gemini/gemini-3.1-flash-lite
 GEMINI_API_KEY=your-api-key
 ```
 
-### 5. Running the Application
+### 2. Running with Docker Compose (Recommended)
 
-There are multiple ways to run the application:
+If you have Docker installed, this is the easiest way to run the entire system:
 
-#### Option A: Running Locally
+```bash
+docker compose up --build
+```
 
-To run the app locally, just use:
+_(This will build the image and start the container, executing the multiagent workflow automatically.)_
+
+Once completed, the planned outputs such as `event_plan.md` and `negotiation_summary.md` will be available in the `output/` directory.
+
+### 3. Running Locally (Alternative)
+
+This project uses `Python` with `uv` for dependency management. If you prefer running without Docker:
+
+**1. Install Prerequisites**
+Ensure you have `uv` installed. If you don't have it installed:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**2. Create and Activate the Virtual Environment**
+
+```bash
+uv venv .venv
+source .venv/bin/activate
+```
+
+**3. Install Dependencies**
+
+```bash
+uv sync
+```
+
+_(You can also use the CrewAI CLI: `crewai install`)_
+
+**4. Run the Application**
 
 ```bash
 # Make sure you are inside the venv
@@ -90,15 +93,5 @@ crewai run
 # If you wish to save logs inside a file you can pipe the output via the tee command like so
 crewai run 2>&1 | tee output/conversation.log
 ```
-
-#### Option B: Running with Docker Compose
-
-If you prefer using Docker, you can run the entire system via Docker Compose. Ensure your `.env` file is set up, then run:
-
-```bash
-docker compose up --build
-```
-
-_(This will build the image and start the container, executing the multiagent workflow automatically.)_
 
 Once completed, the planned outputs such as `event_plan.md` and `negotiation_summary.md` will be available in the `output/` directory.
