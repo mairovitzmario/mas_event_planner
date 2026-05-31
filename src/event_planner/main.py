@@ -2,7 +2,6 @@
 import sys
 import os
 import warnings
-from datetime import datetime
 
 from event_planner.crew import EventPlanner
 
@@ -34,7 +33,6 @@ def run():
         print(f"=============================================\n")
         
         inputs = {
-            'current_year': str(datetime.now().year),
             'previous_issues': previous_issues
         }
         
@@ -76,7 +74,7 @@ def run():
                 f.write(plan_result.final_plan_markdown)
 
 def train():
-    inputs = {'current_year': str(datetime.now().year), 'previous_issues': 'None'}
+    inputs = {'previous_issues': 'None'}
     try:
         EventPlanner(guests_data=GUESTS_DATA).crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
     except Exception as e:
@@ -89,7 +87,7 @@ def replay():
         raise Exception(f"An error occurred while replaying the crew: {e}")
 
 def test():
-    inputs = {'current_year': str(datetime.now().year), 'previous_issues': 'None'}
+    inputs = {'previous_issues': 'None'}
     try:
         EventPlanner(guests_data=GUESTS_DATA).crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
     except Exception as e:
