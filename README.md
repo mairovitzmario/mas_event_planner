@@ -34,6 +34,34 @@ The system operates via a collaborative and iterative negotiation process:
 - **Host Finalize Task** (Host Agent): Incorporates the menu and all guest feedback to adjust the seating chart, resolving lingering complaints and generating the absolute final event plan as markdown.
 - **Summarize Negotiation Task** (Summarizer Agent): Reads all initial preferences, draft plans, reactions, and the final output to produce a brief, lively summary of the negotiation cycle and structurally populates the final data format.
 
+## Project Structure
+
+```text
+mas_event_planner/
+├── AGENTS.md               # CrewAI reference and patterns
+├── compose.yaml            # Docker Compose configuration
+├── Dockerfile              # Dockerfile for running the application
+├── pyproject.toml          # Python project dependencies and metadata
+├── uv.lock                 # Lockfile for Python dependencies
+├── README.md               # Project documentation
+├── iterations/             # Saved separate runs tested on different examples
+│   ├── 1/                  # Example run 1
+│   ├── 2/                  # Example run 2
+│   └── 3/                  # Example run 3
+├── output/                 # Generated outputs from the current run
+│   ├── event_plan.md
+│   └── negotiation_summary.md
+│   └── conversation.log
+└── src/                    # Source code directory
+    └── event_planner/      # Main application package
+        ├── __init__.py
+        ├── crew.py         # Crew orchestration and agent instantiation
+        ├── main.py         # Entry point for the application
+        └── config/         # Declarative YAML configurations
+            ├── agents.yaml # Agent definitions
+            └── tasks.yaml  # Task definitions
+```
+
 ## Setup Instructions
 
 ### 1. Configuration (Required for all methods)
