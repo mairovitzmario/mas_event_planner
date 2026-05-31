@@ -20,7 +20,11 @@ def run():
     max_iterations = 3
     iteration = 1
     previous_issues = "None. This is the first draft."
-    
+
+    # Clear initial summary document block
+    with open("negotiation_summary.md", "w") as f:
+        f.write("# Total Event Planning Negotiation Summary\n\n")
+
     while iteration <= max_iterations:
         print(f"\n=============================================")
         print(f"--- Starting Negotiation Loop {iteration}/{max_iterations} ---")
@@ -38,6 +42,12 @@ def run():
             if not plan_result:
                 print("\nError: No pydantic output returned from Crew. Exiting.")
                 break
+
+            # Write individual loop negotiation summary
+            if plan_result.negotiation_summary:
+                with open("negotiation_summary.md", "a") as f:
+                    f.write(f"## Loop {iteration} Negotiation Drama\n")
+                    f.write(plan_result.negotiation_summary + "\n\n")
                 
             if plan_result.all_resolved:
                 print("\n*** Success! All guests are perfectly happy! ***\n")

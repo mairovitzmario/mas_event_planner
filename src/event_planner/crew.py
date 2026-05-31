@@ -7,6 +7,7 @@ class EventPlanResult(BaseModel):
     all_resolved: bool = Field(description="True if there were zero complaints from guests in their reviews, meaning everyone perfectly approved.")
     remaining_complaints: List[str] = Field(description="List of objections raised by guests that could not be satisfied, if any.")
     final_plan_markdown: str = Field(description="The complete event plan markdown, including the menu and the seating chart.")
+    negotiation_summary: str = Field(description="A 2-3 paragraph summary of the event planning negotiation drama, guest complaints, and host compromises from this specific iteration.")
 
 @CrewBase
 class EventPlanner():
@@ -29,6 +30,13 @@ class EventPlanner():
     def host_agent(self) -> Agent:
         return Agent(
             config=self.agents_config['host_agent'],
+            verbose=True
+        )
+
+    @agent
+    def summarizer_agent(self) -> Agent:
+        return Agent(
+            config=self.agents_config['summarizer_agent'],
             verbose=True
         )
 
@@ -81,16 +89,23 @@ class EventPlanner():
             )
             review_tasks.append(rev_task)
 
-        # 5. Host finalizes everything resolving conflicts, providing output inside Pydantic model
+        # 5. Host finalizes everything resolving conflicts (outputs raw text markdown)
         finalize_task = Task(
             config=self.tasks_config['host_finalize_task'],
             agent=self.host_agent(),
-            context=[menu_task, draft_seating_task] + review_tasks,
+            context=[menu_task, draft_seating_task] + review_tasks
+        )
+
+        # 6. Summarizer produces final JSON + The Negotiation Summary
+        summary_task = Task(
+            config=self.tasks_config['summarize_negotiation_task'],
+            agent=self.summarizer_agent(),
+            context=preference_tasks + [draft_seating_task] + review_tasks + [finalize_task],
             output_pydantic=EventPlanResult
         )
 
-        all_agents = list(guest_agents.values()) + [self.catering_agent(), self.host_agent()]
-        all_tasks = preference_tasks + [menu_task, draft_seating_task] + review_tasks + [finalize_task]
+        all_agents = list(guest_agents.values()) + [self.catering_agent(), self.host_agent(), self.summarizer_agent()]
+        all_tasks = preference_tasks + [menu_task, draft_seating_task] + review_tasks + [finalize_task, summary_task]
 
         return Crew(
             agents=all_agents,
