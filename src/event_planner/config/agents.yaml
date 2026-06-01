@@ -34,3 +34,13 @@ summarizer_agent:
     Provide a cohesive summary of the negotiation process, detailing what guests wanted, what the host proposed, the objections raised, and the final state.
   backstory: >
     You are an objective observer compiling meeting minutes and negotiation summaries. You document the drama, the compromises, and perfectly log any remaining unresolved complaints.
+
+financial_agent:
+  role: >
+    Event Treasurer
+  goal: >
+    Enforce a strict budget limit of {budget} for the entire event.
+  backstory: >
+    You hold the purse strings. You evaluate the caterer's menu and the host's seating chart.
+    Highly customized menus (e.g. separate dishes for everyone) and many independent tables cost too much money.
+    If the perceived cost of the plan exceeds {budget}, you MUST strictly object and demand compromises (e.g., "Consolidate the vegan and vegetarian options into one dish", or "Combine tables to save on centerpieces"). You do not care about people's feelings, only the math.

@@ -6,7 +6,7 @@ This project automates event planning by managing overlapping constraints like R
 
 ## Architecture
 
-The system is built using the **CrewAI** framework, leveraging a robust network of autonomous agents to handle specific aspects of the event planning process. Configuration for agents and tasks is defined declaratively using YAML inside `src/event_planner/config/`.
+The system is built using the **CrewAI** framework, leveraging a robust network of multiple autonomous agents, containing of 5 agent types, to handle specific aspects of the event planning process. Configuration for agents and tasks is defined declaratively using YAML inside `src/event_planner/config/`.
 
 ### High-Level Workflow
 
@@ -14,15 +14,16 @@ The system operates via a collaborative and iterative negotiation process:
 
 1. **Requirement Gathering**: Guests declare their attendance, dietary restrictions, and seating preferences.
 2. **Drafting**: The Catering agent designs a menu accommodating all dietary needs, while the Host agent drafts an initial seating chart trying to satisfy everyone's preferences.
-3. **Negotiation & Review**: Guests review the drafted arrangements, either approving them or raising strong objections if their constraints are violated.
-4. **Finalization**: The Host agent adjusts the plan based on the feedback to resolve conflicts, generating the final Event Plan.
-5. **Reporting**: The Summarizer agent documents the entire interaction, logs complaints and compromises, and outputs a comprehensive negotiation summary.
+3. **Negotiation & Review**: Guests review the drafted arrangements, either approving them or raising strong objections if their constraints are violated. Simultaneously, the Treasurer reviews the drafts to ensure they remain within the strict budget.
+4. **Finalization**: The Host agent adjusts the plan based on feedback to resolve guest conflicts and the Treasurer's cost-cutting demands, generating the final Event Plan.
+5. **Reporting**: The Summarizer agent documents the entire interaction, logs complaints and compromises from both the guests and the Treasurer, and outputs a comprehensive negotiation summary.
 
 ### Agents
 
 - **Guest Agents**: Each Guest Agent represents an individual attendee. It strongly advocates for its assigned attendance status, dietary needs, and seating preferences. If not attending, it politely declines; if attending, it rigidly defends its constraints.
 - **Caterer Agent** (Head Caterer): Reviews all attendees' dietary restrictions and crafts a single, inclusive menu that safely feeds everyone.
 - **Host Agent** (Event Host & Coordinator): The meticulous coordinator. It creates draft seating charts, processes guest complaints or approvals, and finalizes the perfect seating chart and overall event plan.
+- **Financial Agent** (Event Treasurer): Holds the purse strings. Evaluates the caterer's menu and the host's seating chart against a strict budget, demanding efficiency and cost-cutting compromises if the plan is too expensive.
 - **Summarizer Agent** (Event Reporter & Summarizer): An objective observer that compiles meeting minutes. It logs the negotiation drama, compromises, and any remaining unresolved complaints into a structured format.
 
 ### Tasks
@@ -31,8 +32,9 @@ The system operates via a collaborative and iterative negotiation process:
 - **Menu Formulation Task** (Catering Agent): Reads all guest preferences and proposes a detailed menu catering explicitly to the attendees' restrictions.
 - **Host Draft Seating Task** (Host Agent): Creates an initial draft seating chart striving to perfectly accommodate attendee preferences, while explicitly addressing any complaints from previous iterations.
 - **Guest Review Task**: Guests review the draft seating chart. They either approve it enthusiastically or strongly object, stating exactly why it fails them.
-- **Host Finalize Task** (Host Agent): Incorporates the menu and all guest feedback to adjust the seating chart, resolving lingering complaints and generating the absolute final event plan as markdown.
-- **Summarize Negotiation Task** (Summarizer Agent): Reads all initial preferences, draft plans, reactions, and the final output to produce a brief, lively summary of the negotiation cycle and structurally populates the final data format.
+- **Financial Review Task** (Financial Agent): Evaluates the Menu and Draft Seating Chart against the overall budget. Approves if cost-effective, or strongly objects and dictates cost-saving measures (e.g., combining tables or simplifying dietary exceptions).
+- **Host Finalize Task** (Host Agent): Incorporates the menu and all feedback from guests and the Treasurer to adjust the seating chart and menu. Resolves lingering complaints and strict budget constraints to generate the absolute final event plan as markdown.
+- **Summarize Negotiation Task** (Summarizer Agent): Reads all initial preferences, draft plans, reactions (from guests and the Treasurer), and the final output to produce a brief, lively summary of the negotiation cycle and structurally populates the final data format.
 
 ## Project Structure
 

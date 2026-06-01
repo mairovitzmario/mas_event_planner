@@ -14,6 +14,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 uv sync --frozen --no-install-project
 
 COPY src/ ./src
+COPY input/ ./input/
  
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen

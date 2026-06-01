@@ -16,11 +16,22 @@ host_draft_seating_task:
     Read the preferences from all attending guests. 
     IMPORTANT: Here are the complaints from the previous iteration that you MUST try to fix this time: 
     {previous_issues}
-    
+
     Create an initial DRAFT Seating Chart. Explicitly list who sits next to whom. Try to satisfy as many preferences as possible.
   expected_output: >
     A drafted seating chart.
   agent: host_agent
+
+financial_review_task:
+  description: >
+    Review the Menu proposed by the Caterer and the DRAFT Seating Chart proposed by the Host.
+    Evaluate the financial implications. The total budget is {budget}.
+    If there are too many unique dietary dishes, or too many small, inefficient tables, the cost will exceed {budget}.
+    If the plan seems within budget, reply with an enthusiastic "Approved".
+    If it is too expensive, you MUST strongly object and clearly suggest cost-saving measures (e.g. "Too many dietary exceptions, combine X and Y" or "Group these guests into a larger table").
+  expected_output: >
+    An approval or a strong objection outlining required cost-saving cuts.
+  agent: financial_agent
 
 guest_review_task:
   description: >
@@ -33,17 +44,18 @@ guest_review_task:
 
 host_finalize_task:
   description: >
-    Review the menu and all guest feedback on your drafted seating chart. 
-    Adjust the seating chart to resolve any remaining guest complaints. Produce the absolute final event plan.
+    Review the proposed menu and all feedback on your drafted seating chart from the guests and the Treasurer.
+    Adjust the menu and the seating chart to resolve any remaining guest complaints AND satisfy the Treasurer's cost-cutting demands.
+    The budget is {budget}, so you must consolidate if the Treasurer said it was too expensive. Produce the absolute final event plan.
   expected_output: >
     The Final Event Plan with the Final Menu and Final Seating Chart. Formatted as markdown.
   agent: host_agent
 
 summarize_negotiation_task:
   description: >
-    Read the initial preferences, the draft seating chart, the guests' reactions, and the Host's final plan. 
-    Create a brief, lively summary of how the negotiation unfolded in this iteration, mentioning who complained and why.
-    Then, populate the final JSON structure using the Host's final plan, the extracted list of any remaining complaints, the all_resolved boolean (True only if zero complaints), and your negotiation summary.
+    Read the initial preferences, the draft seating chart, the guests' reactions, the Treasurer's financial review, and the Host's final plan. 
+    Create a brief, lively summary of how the negotiation unfolded in this iteration, mentioning who complained (guests or the treasurer) and why.
+    Then, populate the final JSON structure using the Host's final plan, the extracted list of any remaining complaints (from guests or the treasurer), the all_resolved boolean (True only if zero complaints), and your negotiation summary.
   expected_output: >
     Fill out the required JSON format.
   agent: summarizer_agent

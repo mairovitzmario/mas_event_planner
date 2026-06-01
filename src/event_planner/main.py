@@ -1,20 +1,15 @@
 #!/usr/bin/env python
 import sys
 import os
+import json
 import warnings
 
 from event_planner.crew import EventPlanner
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
-GUESTS_DATA = [
-    {"guest_name": "Alice", "attending": "Yes", "dietary": "Vegetarian", "seating": "Must not sit next to Bob or Charlie. Wants to sit near Fiona."},
-    {"guest_name": "Bob", "attending": "Yes", "dietary": "Carnivore", "seating": "Must sit next to David. Refuses to sit near Eve (vegan)."},
-    {"guest_name": "Charlie", "attending": "Yes", "dietary": "Gluten-free", "seating": "Needs to sit next to Alice."}, # Intentional conflict with Alice
-    {"guest_name": "David", "attending": "Yes", "dietary": "None", "seating": "Must sit next to Bob."},
-    {"guest_name": "Eve", "attending": "Yes", "dietary": "Vegan", "seating": "Needs a window seat, refuses to sit next to any Carnivores like Bob."},
-    {"guest_name": "Fiona", "attending": "Yes", "dietary": "Pescatarian", "seating": "Will only sit next to Alice."}
-]
+with open("input/data.json", "r") as f:
+    DATA = json.load(f)
 
 def run():
     max_iterations = 3
@@ -33,11 +28,12 @@ def run():
         print(f"=============================================\n")
         
         inputs = {
-            'previous_issues': previous_issues
+            'previous_issues': previous_issues,
+            'budget': DATA['budget']  
         }
         
         try:
-            result = EventPlanner(guests_data=GUESTS_DATA).crew().kickoff(inputs=inputs)
+            result = EventPlanner(guests_data=DATA['guests']).crew().kickoff(inputs=inputs)
             plan_result = result.pydantic
             
             if not plan_result:
@@ -74,21 +70,21 @@ def run():
                 f.write(plan_result.final_plan_markdown)
 
 def train():
-    inputs = {'previous_issues': 'None'}
+    inputs = {'previous_issues': 'None', 'budget': DATA['budget']}
     try:
-        EventPlanner(guests_data=GUESTS_DATA).crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
+        EventPlanner(guests_data=DATA['guests']).crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
     except Exception as e:
         raise Exception(f"An error occurred while training the crew: {e}")
 
 def replay():
     try:
-        EventPlanner(guests_data=GUESTS_DATA).crew().replay(task_id=sys.argv[1])
+        EventPlanner(guests_data=DATA['guests']).crew().replay(task_id=sys.argv[1])
     except Exception as e:
         raise Exception(f"An error occurred while replaying the crew: {e}")
 
 def test():
-    inputs = {'previous_issues': 'None'}
+    inputs = {'previous_issues': 'None', 'budget': DATA['budget']}
     try:
-        EventPlanner(guests_data=GUESTS_DATA).crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
+        EventPlanner(guests_data=DATA['guests']).crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
     except Exception as e:
         raise Exception(f"An error occurred while testing the crew: {e}")

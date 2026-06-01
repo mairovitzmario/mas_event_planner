@@ -34,6 +34,13 @@ class EventPlanner():
         )
 
     @agent
+    def financial_agent(self) -> Agent:
+        return Agent(
+            config=self.agents_config['financial_agent'],
+            verbose=True
+        )
+
+    @agent
     def summarizer_agent(self) -> Agent:
         return Agent(
             config=self.agents_config['summarizer_agent'],
@@ -89,6 +96,14 @@ class EventPlanner():
             )
             review_tasks.append(rev_task)
 
+        # 4.5 Financial agent reviews the drafts
+        fin_review_task = Task(
+            config=self.tasks_config['financial_review_task'],
+            agent=self.financial_agent(),
+            context=[menu_task, draft_seating_task]
+        )
+        review_tasks.append(fin_review_task)
+
         # 5. Host finalizes everything resolving conflicts (outputs raw text markdown)
         finalize_task = Task(
             config=self.tasks_config['host_finalize_task'],
@@ -104,7 +119,7 @@ class EventPlanner():
             output_pydantic=EventPlanResult
         )
 
-        all_agents = list(guest_agents.values()) + [self.catering_agent(), self.host_agent(), self.summarizer_agent()]
+        all_agents = list(guest_agents.values()) + [self.catering_agent(), self.host_agent(), self.financial_agent(), self.summarizer_agent()]
         all_tasks = preference_tasks + [menu_task, draft_seating_task] + review_tasks + [finalize_task, summary_task]
 
         return Crew(
